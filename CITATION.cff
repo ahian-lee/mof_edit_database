@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+title: MOF Functional-Group-Editing Database (MOF-Edit-DB)
+message: >-
+  If you use this dataset, please cite it using the
+  metadata below.
+type: dataset
+version: 1.0.0
+doi: 10.5281/zenodo.TODO
+authors:
+  - name: "[Authors — to be completed]"
+date-released: "2026-08-30"
+license: CC-BY-4.0
+abstract: >-
+  191,687 pore-measured metal-organic framework (MOF) records built by
+  systematic linker functional-group editing, each assembled with pormake,
+  relaxed with UFF4MOF/LAMMPS and measured with Zeo++ under one protocol.
+  135,283 edited records carry the measured pore-limiting diameter of the
+  same unedited parent scaffold, giving one-to-one before/after
+  functionalization contrasts (Delta-PLD), plus a 77,161-asset QC-cleaned
+  edited-edge bank with SMILES and SHA256-tracked 3D structures.
+keywords:
+  - metal-organic frameworks
+  - pore limiting diameter
+  - functional group editing
+  - linker functionalization
+  - high-throughput screening
+  - machine-learning benchmark
+repository-code: "https://github.com/ahian-lee/mof_edit_database"
