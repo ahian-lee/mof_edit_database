@@ -1,7 +1,9 @@
 # MOF Functional-Group-Editing Database (MOF-Edit-DB)
 
 **191,687 pore-measured MOF records built by systematic linker functional-group
-(FG) editing, with unedited-parent contrasts and a 77k asset edge bank.**
+(FG) editing, with unedited-parent contrasts and a 77k asset edge bank — plus a
+**65,000-edit FG→H reverse-editing dataset** (functional-group *removal*) measured
+under the identical protocol.**
 
 Every record was assembled with [pormake](https://github.com/Sangwon91/PORMAKE),
 relaxed with UFF4MOF in LAMMPS, and measured with Zeo++ under one identical
@@ -41,6 +43,34 @@ protocol, so pore metrics — including the functionalization-induced pore shift
 | PLD range (edited records) | 0.18 – 70.79 Å |
 | ΔPLD median / range (paired records) | −3.01 Å / −28.7 … +37.1 Å |
 | Force field / pore code | UFF4MOF (LAMMPS) / Zeo++ v0.3 |
+| **FG→H reverse edits (new)** | **65,000 jobs · 63,521 measured H-states · 14,132 measured FG-parents · 61,844 Δ pairs (median +0.37 Å, 75.8% pore-opening)** |
+
+## FG→H reverse-editing dataset (new)
+
+The main release measures **H→FG** edits (the pore-shrinking direction). This
+companion set measures the **reverse intervention** — chemically *removing*
+side-chain FGs from FG-carrying base linkers (CH3, OH, F, OCH3, NH2, Br, Cl,
+I, SH) and re-measuring under the identical assembly → UFF4MOF → Zeo++ `-ha`
+protocol:
+
+* 476 base linkers chemically scanned → **180 linkers / 487 removable sites**;
+  **1,693 variant edges** (single-site, per-type, full and random-subset strips)
+  with SHA256 identity contracts.
+* **65,000 jobs** executed: **63,521 relaxed H-state products (97.7%)** and
+  **14,132 relaxed FG-state parents (99.9%)**, both re-measured —
+  **61,844 complete Δ pairs**.
+* ΔPLD is **monotone in FG volume and removal count**: single-site medians
+  F 0.15 < OH 0.17 < CH3 0.35 < Cl 0.39 < Br 0.55 < I 0.76 Å; full 14-site
+  strips reach +1.77 Å (max +6.1 Å). 75.8% of pairs open the pore; the 24%
+  that shrink slightly reflect relaxation-induced cell contraction — the
+  mirror image of the reverse-direction edits in the H→FG release.
+* Enables **edit-direction symmetry studies** (relaxation hysteresis on
+  identical scaffolds), **additivity analyses** over 1,073 k-of-n removal
+  strips, and adds **63.5k new valid MOFs** absent from the original assembly
+  universe.
+
+Details, schema and limitations: [`docs/fg_to_h_dataset.md`](docs/fg_to_h_dataset.md).
+Reproduction scripts: [`code/fg_to_h/`](code/fg_to_h).
 
 ## Files
 
@@ -50,6 +80,10 @@ protocol, so pore metrics — including the functionalization-induced pore shift
 | `data/edited_vs_base_zeo_table.csv.gz` | 142,533 × 18 | 7.3 MB | Edited-vs-base Zeo++ contrast per edited MOF: PLD/LCD/GCD/void-fraction/density on both sides + ΔPLD |
 | `data/edited_edge_table.csv.gz` | 77,161 × 20 | 4.8 MB | Edited-edge asset bank: parent linker, substitution recipe (`fg_tokens`, `fg_smiles`), XYZ checksum, per-edge usage & aggregate Zeo stats |
 | `data/edited_edge_table_excluded.csv.gz` | 615 × 21 | <0.1 MB | Assets excluded by geometric QC (`FAIL:anchor_dist_collapse`), with reasons |
+| `data/fg_to_h_table.csv.gz` | 65,000 × 18 | 3.8 MB | **FG→H reverse-edit table**: context, FG source edge, H variant edge, removal recipe, both-state PLD/LCD, ΔPLD/ΔLCD |
+| `data/fg_to_h_variant_edges.csv.gz` | 1,693 | 15 KB | Variant-edge bank (FG→H): source edge, removal recipe, atom count |
+| `data/fg_to_h_source_jobs.csv.gz` | 14,583 | 373 KB | FG-state parent jobs (exact-XYZ identity contracts) |
+| `data/fg_to_h_source_edge_fg_sites.json.gz` | 180 | 4 KB | Per-edge removable-site inventory (FG type, atom indices, attachment) |
 | `data/SHA256SUMS.txt` | — | — | Checksums of all files above |
 
 Structures (assembled CIFs, UFF4MOF-relaxed coordinates, raw Zeo++ `.res`/`.vol`
@@ -98,6 +132,10 @@ FG tokens and SMILES, XYZ SHA256, and aggregate usage statistics
 5. **Generative model evaluation.** Conditional diffusion / GFlowNet /
    autoregressive graph editors can be scored against the empirical
    edit→ΔPLD response surface rather than ad-hoc proxies.
+6. **Edit-direction symmetry & additivity.** The FG→H set gives the *reverse*
+   intervention on matched scaffolds — test relaxation hysteresis and
+   edit-direction asymmetry, and use 1,073 k-of-n removal strips for
+   functional-group additivity/interaction analyses.
 
 ## Methods
 
@@ -110,7 +148,10 @@ LAMMPS (`lmp_serial`) with UFF4MOF. Pore metrics: Zeo++ v0.3 `network -res`
 (Di = LCD, Df = PLD, Dif = LFPD) and `-vol` (accessible volume fraction,
 density). Every measurement uses the same protocol, so ΔPLD is internally
 consistent. Reproduction scripts for the release tables and the integrity-repair
-pipeline are in [`code/`](code/); audit documentation in [`docs/`](docs/).
+pipeline are in [`code/`](code/); audit documentation in [`docs/`](docs/). The
+FG→H reverse set additionally uses bond-table-based side-chain FG
+identification, coordinate-level H-backfilling (1.09 Å along the original
+bond), and SHA256 identity contracts on both states ([`code/fg_to_h/`](code/fg_to_h)).
 
 ## Data quality and known limitations
 
