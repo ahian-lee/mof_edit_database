@@ -1,9 +1,10 @@
 # MOF Functional-Group-Editing Database (MOF-Edit-DB)
 
-**191,687 pore-measured MOF records built by systematic linker functional-group
-(FG) editing, with unedited-parent contrasts and a 77k asset edge bank — plus a
-**65,000-edit FG→H reverse-editing dataset** (functional-group *removal*) measured
-under the identical protocol.**
+**270,819 pore-measured MOF records built by systematic linker functional-group
+(FG) editing in both directions — **191,687 H→FG records** (functional-group
+attachment, with unedited-parent contrasts and a 77k asset edge bank) plus a
+**65,000-edit FG→H reverse set** (functional-group *removal*, including measured
+FG-state parents) — all under the identical protocol.**
 
 Every record was assembled with [pormake](https://github.com/Sangwon91/PORMAKE),
 relaxed with UFF4MOF in LAMMPS, and measured with Zeo++ under one identical
@@ -14,7 +15,7 @@ protocol, so pore metrics — including the functionalization-induced pore shift
 
 ## Why this dataset is useful
 
-- **Paired causal contrasts, not cross-sample statistics.** 135,283 edited MOFs
+- **Paired causal contrasts, not cross-sample statistics.** 197,127 edited MOFs
   carry the measured PLD of *the same unedited parent scaffold*, so ΔPLD is a
   one-to-one before/after intervention label — a natural testbed for
   counterfactual / causal property prediction on materials.
@@ -26,7 +27,7 @@ protocol, so pore metrics — including the functionalization-induced pore shift
   +37.1 Å (92% of edits shrink the pore); within a fixed
   (topology × node × base linker) family, editing alone spans up to **30.4 Å**
   of pore-limiting diameter (990 families span > 10 Å).
-- **Unified protocol.** All 191,687 records: pormake assembly → UFF4MOF/LAMMPS
+- **Unified protocol.** All 270,819 records: pormake assembly → UFF4MOF/LAMMPS
   relaxation → Zeo++ (`-res`, `-vol`). One force field, one code, one pass —
   no cross-literature heterogeneity.
 
@@ -34,14 +35,16 @@ protocol, so pore metrics — including the functionalization-induced pore shift
 
 | | |
 |---|---:|
-| MOF records (all UFF4MOF-relaxed) | 191,687 |
-| — edited with measured parent contrast (ΔPLD) | 135,283 |
+| MOF records (all UFF4MOF-relaxed) | 270,819 |
+| — edited with measured parent contrast (ΔPLD) | 197,127 |
 | — edited, parent not (yet) measured | 24,780 |
-| — unedited base references | 49,154 |
+| — unedited base references + measured FG-state parents | 49,154 + 14,132 |
 | Topologies × inorganic nodes × base-linker families | 600 × 458 × 600 |
-| Edited-edge asset bank (with QC-clean subset) | 77,776 (77,161 clean) |
-| PLD range (edited records) | 0.18 – 70.79 Å |
-| ΔPLD median / range (paired records) | −3.01 Å / −28.7 … +37.1 Å |
+| Edited-edge asset bank (with QC-clean subset) + FG→H variants | 77,776 + 1,693 (77,161 clean) |
+| PLD range (all records) | 0.07 – 83.20 Å |
+| ΔPLD median / range (all paired records) | −1.78 Å / −33.6 … +37.1 Å |
+| — H→FG direction | −3.01 Å median · 92% shrink |
+| — FG→H direction | +0.37 Å median · 75.8% open |
 | Force field / pore code | UFF4MOF (LAMMPS) / Zeo++ v0.3 |
 | **FG→H reverse edits (new)** | **65,000 jobs · 63,521 measured H-states · 14,132 measured FG-parents · 61,844 Δ pairs (median +0.37 Å, 75.8% pore-opening)** |
 
@@ -76,8 +79,8 @@ Reproduction scripts: [`code/fg_to_h/`](code/fg_to_h).
 
 | File | Rows × Cols | Size | Description |
 |---|---|---|---|
-| `data/mof_master_table.csv.gz` | 191,687 × 27 | 12 MB | **Main table**: one row per MOF record — identity, category, scaffold keys, FG-edit label, pore metrics, provenance |
-| `data/edited_vs_base_zeo_table.csv.gz` | 142,533 × 18 | 7.3 MB | Edited-vs-base Zeo++ contrast per edited MOF: PLD/LCD/GCD/void-fraction/density on both sides + ΔPLD |
+| `data/mof_master_table.csv.gz` | 270,819 × 27 | 17.8 MB | **Main table**: one row per MOF record — identity, category, scaffold keys, FG-edit label, pore metrics, provenance |
+| `data/edited_vs_base_zeo_table.csv.gz` | 207,533 × 18 | 10 MB | Edited-vs-base Zeo++ contrast per edited MOF: PLD/LCD/GCD/void-fraction/density on both sides + ΔPLD |
 | `data/edited_edge_table.csv.gz` | 77,161 × 20 | 4.8 MB | Edited-edge asset bank: parent linker, substitution recipe (`fg_tokens`, `fg_smiles`), XYZ checksum, per-edge usage & aggregate Zeo stats |
 | `data/edited_edge_table_excluded.csv.gz` | 615 × 21 | <0.1 MB | Assets excluded by geometric QC (`FAIL:anchor_dist_collapse`), with reasons |
 | `data/fg_to_h_table.csv.gz` | 65,000 × 18 | 3.8 MB | **FG→H reverse-edit table**: context, FG source edge, H variant edge, removal recipe, both-state PLD/LCD, ΔPLD/ΔLCD |
@@ -109,7 +112,7 @@ lightweight repository; see **Data quality** below and contact the authors.
 
 `edited_vs_base_zeo_table.csv` adds parent-side and edited-side
 `*_zeo_pld / *_zeo_lcd / *_zeo_gcd`, `*_vf`, `*_density` (base side filled for
-135,425 / 142,533 rows = 95.0%). `edited_edge_table.csv` resolves every
+135,425 / 142,533 H→FG rows = 95.0%; FG→H rows carry both sides in-table. `edited_edge_table.csv` resolves every
 `augmented_edge_id` to its parent linker, substitution sites (`site_h_ids`),
 FG tokens and SMILES, XYZ SHA256, and aggregate usage statistics
 (`n_mof_in_master`, per-edge mean ΔPLD).
@@ -187,7 +190,7 @@ Data: [CC-BY 4.0](LICENSE). Code: MIT.
 
 ```bibtex
 @dataset{mof_edit_db_2026,
-  title  = {MOF Functional-Group-Editing Database: 191,687 pore-measured MOFs
+  title  = {MOF Functional-Group-Editing Database: 270,819 pore-measured MOFs
             with unedited-parent contrasts and a 77k edited-edge asset bank},
   author = {[Authors]},
   year   = {2026},
@@ -203,7 +206,7 @@ A Zenodo DOI mirror will be added upon archiving.
 import pandas as pd
 
 master = pd.read_csv("data/mof_master_table.csv.gz")
-paired = master.dropna(subset=["delta_pld"])          # 135,283 paired edits
+paired = master.dropna(subset=["delta_pld"])          # 197,127 paired edits
 base   = master[master.category == "base_reference"]  # 49,154 unedited parents
 
 edges = pd.read_csv("data/edited_edge_table.csv.gz")
